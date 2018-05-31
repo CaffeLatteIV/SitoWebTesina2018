@@ -1,12 +1,5 @@
 @charset "utf-8";
-/*
-Template Name: Overerts
-Author: <a href="http://www.os-templates.com/">OS Templates</a>
-Author URI: http://www.os-templates.com/
-Licence: Free to use under our free template licence terms
-Licence URI: http://www.os-templates.com/template-terms
-File: Layout CSS
-*/
+
 
 @import url("fontawesome-4.6.3.min.css");
 @import url("custom.flexslider.css");
@@ -19,6 +12,11 @@ File: Layout CSS
 .row3, .row3 a{}
 .row4, .row4 a{}
 .row5, .row5 a{}
+
+
+/* form
+--------------------------------------------------------------------------------------------------------------- */
+
 
 
 /* Header
