@@ -9,9 +9,8 @@ $login = false; //default false
 //controllo se l'utente ha già fatto il log in
 if (isset($_SESSION['user'])) {
     $login = true; //cambio status del login in true (utente loggato)
-    
 
-// select logged in users detail
+// seleziono i dati dell'utente
 $res = $conn->query("SELECT * FROM users WHERE id=" . $_SESSION['user']); //trovo l'utente nel database
 $userRow = mysqli_fetch_array($res, MYSQLI_ASSOC); //restituisco la riga sottoforma di array associativo 
 }
@@ -36,11 +35,11 @@ $userRow = mysqli_fetch_array($res, MYSQLI_ASSOC); //restituisco la riga sottofo
       <header id="header" class="hoc clear"> 
         <!-- ################################################################################################ -->
         <div id="logo" class="fl_left">
-          <h1><a href="index.html">Overerts</a></h1>
+          <h1><a href="#">Humystop</a></h1>
         </div>
         <nav id="mainav" class="fl_right">
           <ul class="clear">
-            <li class="active"><a href="index.html">Home</a></li>
+            <li class="active"><a href="#">Home</a></li>
             <li><a class="drop" href="#">Pages</a>
               <ul>
                 <li><a href="pages/gallery.html">Gallery</a></li>
@@ -82,16 +81,15 @@ $userRow = mysqli_fetch_array($res, MYSQLI_ASSOC); //restituisco la riga sottofo
 			  //-------------------------------- stampa dati essenziali + bottone logout ---------------------------------
      echo '
 
-
+     <li><a href="pages/visualizza.php">Misurazioni</a></li>
      <li class="dropdown">
      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
      aria-expanded="false">
      <span
-     class="glyphicon glyphicon-user"></span>&nbsp;Logged
-     in:  echo $userRow["email"]; 
+     class="glyphicon glyphicon-user"></span>'. $userRow["email"].' 
      &nbsp;<span class="caret"></span></a>
      <ul class="dropdown-menu">
-     <li><a href="logout.php?logout"><span class="glyphicon glyphicon-log-out"></span>&nbsp;Logout</a>
+     <li><a href="pages/logout.php?logout"><span class="glyphicon glyphicon-log-out"></span>Disconnettiti</a>
      </li>
      </ul>
      </li>
