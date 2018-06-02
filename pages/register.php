@@ -38,7 +38,7 @@ if (isset($_POST['signup'])) {
             $_SESSION['user'] = $user_id; // set session and redirect to index page
             if (isset($_SESSION['user'])) {
                 print_r($_SESSION);
-                header("Location: index.php");
+                header("Location: ../index.php");
                 exit;
             }
 
@@ -54,18 +54,87 @@ if (isset($_POST['signup'])) {
 
 }
 ?>
-<!DOCTYPE html>
+<!DOCTYPE php>
+
+<php>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Registration</title>
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css"/>
-    <link rel="stylesheet" href="assets/css/style.css" type="text/css"/>
+<title>Login</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="../layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
+ <link rel="stylesheet" href="../layout/styles/bootstrap.min.css" type="text/css"/>
 </head>
-<body>
-
-<div class="container">
-
-    <div id="login-form">
+<body id="top">
+<!-- ################################################################################################ -->
+<!-- ################################################################################################ -->
+<!-- ################################################################################################ -->
+<!-- Top Background Image Wrapper -->
+<div class="bgded overlay" style="background-image:url('../images/demo/backgrounds/01.png');"> 
+  <!-- ################################################################################################ -->
+  <div class="wrapper row1">
+    <header id="header" class="hoc clear"> 
+      <!-- ################################################################################################ -->
+      <div id="logo" class="fl_left">
+        <h1><a href="../index.php">Humystop</a></h1>
+      </div>
+      <nav id="mainav" class="fl_right">
+        <ul class="clear">
+          <li><a href="../index.php">Home</a></li>
+          <li ><a class="drop" href="#">Pages</a>
+            <ul>
+              <li><a href="gallery.php">Gallery</a></li>
+              <li><a href="full-width.php">Full Width</a></li>
+              <li><a href="sidebar-left.php">Sidebar Left</a></li>
+              <li><a href="sidebar-right.php">Sidebar Right</a></li>
+              <li><a href="basic-grid.php">Basic Grid</a></li>
+            </ul>
+          </li>
+          <li><a class="drop" href="#">Dropdown</a>
+            <ul>
+              <li><a href="#">Level 2</a></li>
+              <li><a class="drop" href="#">Level 2 + Drop</a>
+                <ul>
+                  <li><a href="#">Level 3</a></li>
+                  <li><a href="#">Level 3</a></li>
+                  <li><a href="#">Level 3</a></li>
+                </ul>
+              </li>
+              <li><a href="#">Level 2</a></li>
+            </ul>
+          </li>
+          <li><a href="info.php">Chi siamo</a></li>
+               <li><a href="login.php">Accedi</a></li>
+            <li><a href="registrer.php" class="active">Registrati</a></li>
+        </ul>
+      </nav>
+      <!-- ################################################################################################ -->
+    </header>
+  </div>
+  <!-- ################################################################################################ -->
+  <!-- ################################################################################################ -->
+  <!-- ################################################################################################ -->
+  <div id="breadcrumb" class="hoc clear"> 
+    <!-- ################################################################################################ -->
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Registrati</a></li>
+      
+    </ul>
+    <!-- ################################################################################################ -->
+  </div>
+  <!-- ################################################################################################ -->
+</div>
+<!-- End Top Background Image Wrapper -->
+<!-- ################################################################################################ -->
+<!-- ################################################################################################ -->
+<!-- ################################################################################################ -->
+<div class="wrapper row3">
+  <main class="hoc container clear"> 
+    <!-- main body -->
+    <!-- ################################################################################################ -->
+    <div class="content"> 
+      <!-- ################################################################################################ -->
+     <div id="login-form">
         <form method="post" autocomplete="off">
 
             <div class="col-md-12">
@@ -114,7 +183,7 @@ if (isset($_POST['signup'])) {
                 </div>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="TOS" value="This"><a href="#">Acconsento alle normel sulla privacy</a></label>
+                    <label><input type="checkbox" id="TOS" value="This"><a href="../licence.php">Acconsento alle normel sulla privacy</a></label>
                 </div>
 
                 <div class="form-group">
@@ -132,10 +201,17 @@ if (isset($_POST['signup'])) {
         </form>
     </div>
 
+      
+      
+    
+      </div>
+      <!-- ################################################################################################ -->
+    </div>
+    <!-- ################################################################################################ -->
+    <!-- / main body -->
+    <div class="clear"></div>
+  </main>
 </div>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="assets/js/tos.js"></script>
-
-</body>
-</html>
+ <?php
+        require __DIR__ . "/bottom.php"
+        ?>

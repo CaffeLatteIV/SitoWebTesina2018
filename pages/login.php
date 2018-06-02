@@ -142,8 +142,9 @@ if (isset($_POST['btn-login'])) {
                 <li><a href="#">Level 2</a></li>
               </ul>
             </li>
+             <li><a href="info.php">Chi siamo</a></li>
             <li  class="active"><a href="#">Accedi</a></li>
-            <li><a href="registrer.php">Registrati</a></li>
+            <li><a href="register.php">Registrati</a></li>
           </ul>
         </nav>
         <!-- ################################################################################################ -->

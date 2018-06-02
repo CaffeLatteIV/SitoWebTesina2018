@@ -16,13 +16,13 @@ $res = $conn->query("SELECT * FROM users WHERE id=" . $_SESSION['user']); //trov
 $userRow = mysqli_fetch_array($res, MYSQLI_ASSOC); //restituisco la riga sottoforma di array associativo 
 }
 ?>
-  <!DOCTYPE.php>
-  <head>
-    <title>Chi siamo</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" href="../layout/styles/bootstrap.min.css" type="text/css"/>
-    <link href="../layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
+<!DOCTYPE.php>
+<head>
+  <title>Chi siamo</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="../layout/styles/bootstrap.min.css" type="text/css"/>
+  <link href="../layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
 
 </head>
 <body id="top">
@@ -63,7 +63,8 @@ $userRow = mysqli_fetch_array($res, MYSQLI_ASSOC); //restituisco la riga sottofo
                 <li><a href="#">Level 2</a></li>
               </ul>
             </li>
-            <li  class="active"><a href="#">Accedi</a></li>
+            <li class="active"><a href="#">Chi siamo</a></li>
+            <li><a href="login.php">Accedi</a></li>
             <li><a href="registrer.php">Registrati</a></li>
           </ul>
         </nav>
@@ -77,7 +78,7 @@ $userRow = mysqli_fetch_array($res, MYSQLI_ASSOC); //restituisco la riga sottofo
       <!-- ################################################################################################ -->
       <ul>
         <li><a href="#">Home</a></li>
-        <li><a href="#">Accedi</a></li>
+        <li><a href="#">Chi siamo</a></li>
       </ul>
       <!-- ################################################################################################ -->
     </div>
@@ -96,13 +97,13 @@ $userRow = mysqli_fetch_array($res, MYSQLI_ASSOC); //restituisco la riga sottofo
         
 
         
+        <!-- ################################################################################################ -->
+      </div>
       <!-- ################################################################################################ -->
-    </div>
-    <!-- ################################################################################################ -->
-    <!-- / main body -->
-    <div class="clear"></div>
-  </main>
-</div>
-<?php
-require __DIR__ . "/bottom.php"
-?>
+      <!-- / main body -->
+      <div class="clear"></div>
+    </main>
+  </div>
+  <?php
+  require __DIR__ . "/bottom.php"
+  ?>

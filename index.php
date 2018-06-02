@@ -62,6 +62,7 @@ $userRow = mysqli_fetch_array($res, MYSQLI_ASSOC); //restituisco la riga sottofo
                 <li><a href="#">Level 2</a></li>
               </ul>
             </li>
+            <li><a href="pages/info.php">Chi siamo</a></li>
             <?php 
 		  if(!$login){ //se l'utente NON ha ancora effettuato il login 
 		  
