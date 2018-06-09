@@ -13,16 +13,26 @@ if (isset($_SESSION['user'])) {
 // seleziono i dati dell'utente
 $res = $conn->query("SELECT * FROM users WHERE id=" . $_SESSION['user']); //trovo l'utente nel database
 $userRow = mysqli_fetch_array($res, MYSQLI_ASSOC); //restituisco la riga sottoforma di array associativo 
+$_SESSION['id'] = $userRow["id"];
 }
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Humystop</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css"/>
-  <link href="layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
+<!DOCTYPE php>
+<php>
+  <head>
+    <title>Humystop</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="layout/styles/bootstrap.min.css" type="text/css"/>
+    <link href="layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
+    <style type="text/css">
+    a:link {
+      text-decoration: none;
+    }
+
+    a:visited {
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body id="top">
   <!-- ################################################################################################ -->
@@ -42,11 +52,11 @@ $userRow = mysqli_fetch_array($res, MYSQLI_ASSOC); //restituisco la riga sottofo
             <li class="active"><a href="#">Home</a></li>
             <li><a class="drop" href="#">Pages</a>
               <ul>
-                <li><a href="pages/gallery.html">Gallery</a></li>
-                <li><a href="pages/full-width.html">Full Width</a></li>
-                <li><a href="pages/sidebar-left.html">Sidebar Left</a></li>
-                <li><a href="pages/sidebar-right.html">Sidebar Right</a></li>
-                <li><a href="pages/basic-grid.html">Basic Grid</a></li>
+                <li><a href="gallery.php">Gallery</a></li>
+                <li><a href="full-width.php">Full Width</a></li>
+                <li><a href="sidebar-left.php">Sidebar Left</a></li>
+                <li><a href="sidebar-right.php">Sidebar Right</a></li>
+                <li><a href="basic-grid.php">Basic Grid</a></li>
               </ul>
             </li>
             <li><a class="drop" href="#">Dropdown</a>
@@ -64,43 +74,102 @@ $userRow = mysqli_fetch_array($res, MYSQLI_ASSOC); //restituisco la riga sottofo
             </li>
             <li><a href="pages/info.php">Chi siamo</a></li>
             <?php 
-		  if(!$login){ //se l'utente NON ha ancora effettuato il login 
-		  
-		  //-------------------------------------------stampa bottoni per login-----------------------------------------
-     echo'
-     <li><a href="pages/login.php">Login </a></li>
-     <li><a href="pages/register.php">registrati </a></li>
+      if(!$login){ //se l'utente NON ha ancora effettuato il login 
+      
+      //-------------------------------------------stampa bottoni per login-----------------------------------------
+      ?>
+      <li><a href="pages/login.php">Login </a></li>
+      <li><a href="pages/register.php">registrati </a></li>
 
-     ';};
-		  // ------------------------------------------------- FINE ----------------------------------------------------
+    <?php };
+      // ------------------------------------------------- FINE ----------------------------------------------------
+    ?>
+
+    <?php
+
+      if($login){//se l'utente ha effettuato l'accesso
+      
+        //-------------------------------- -------------- stampa ---------------------------------------------------
+
+       //query che restituisce tutti gli anni in ordine dal maggiore al minore
+      $queryUT = $conn->query("SELECT m.anno FROM misurazioni as m, dispositivo as d WHERE m.codice = d.codice && d.proprietario=" . $_SESSION['id']." GROUP BY (anno) ORDER BY anno DESC" ); //query umidità e temperatura
+      $queryVA = $conn->query("SELECT m.anno FROM misurazioni as m, dispositivo as d WHERE m.codice = d.codice && d.proprietario=" . $_SESSION['id']." GROUP BY (anno) ORDER BY anno DESC" ); //query volt e ampere
+
+
+      if ($queryUT->num_rows >0) { // se è già stato registrato il rilevatore (non importa quale query si usi)
+                # code...
+
+        ?>
+
+        <li><a class="drop" href="#">Misurazioni</a>
+          <ul>
+            <li><a class="drop" href="#">Umidità/Temperatura</a>
+              <ul>
+                <?php 
+
+
+                while ($riga = $queryUT->fetch_assoc()) {
+                // ordino le misurazioni per anno (decrescente)
+
+
+                  ?>
+                  <li><a href="pages/umiTemp.php?y=<?php echo $riga['anno']//passo all il @param anno alla pagina ?>"><?php echo $riga["anno"] ?></a></li>
+
+
+                  <?php
+
+                };
+                ?>
+              </ul>
+            </li>
+            <li><a class="drop" href="#">Volt/Ampere</a>
+              <ul>
+                <?php 
+                while ($riga = $queryVA->fetch_assoc()) {
+                // ordino le misurazioni per anno (decrescente)
+                  ?>
+                  <li><a href="pages/voltAmp.php?y=<?php echo $riga['anno']//passo all il @param anno alla pagina ?>"><?php echo $riga["anno"] ?></a></li>
+                  <?php
+                };
+                ?>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li>
+         <a class="drop" href="#">Dispositivi</a><!-- possibilità di aggiungere un dispositivo -->
+         <ul>
+           <li><a href="pages/dispositivo.php?s=a">Aggiungi</a></li>
+           <li><a href="pages/dispositivo.php?s=v">Visualizza</a></li>
+         </ul>
+       </li>
+       <?php
+
+    }else{ //altrimenti se non è stato registrato --> registralo
      ?>
-
-     <?php
-
-		  if($login){//se l'utente ha effettuato l'accesso
-		  
-			  //-------------------------------- stampa dati essenziali + bottone logout ---------------------------------
-     echo '
-
-     <li><a href="pages/visualizza.php">Misurazioni</a></li>
-     <li class="dropdown">
-     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-     aria-expanded="false">
-     <span
-     class="glyphicon glyphicon-user"></span>'. $userRow["email"].' 
-     &nbsp;<span class="caret"></span></a>
-     <ul class="dropdown-menu">
-     <li><a href="pages/logout.php?logout"><span class="glyphicon glyphicon-log-out"></span>Disconnettiti</a>
+     <li>
+       <a class="drop" href="#">Dispositivi</a><!-- possibilità di aggiungere un dispositivo -->
+       <ul>
+         <li><a href="pages/dispositivo.php?s=a">Aggiungi</a></li>
+         <li><a href="pages/dispositivo.php?s=v">Visualizza</a></li>
+       </ul>
      </li>
+   <?php } ?>
+   
+   <li>
+     <a class="drop" href="#"><?php echo $userRow["email"] ?></a>
+     <ul>
+       <li><a href="pages/logout.php?logout">Disconnettiti</a>
+       </li>
      </ul>
-     </li>
-     ';};
-			// ------------------------------------------------- FINE ----------------------------------------------------
-     ?>
+   </li>
+ <?php };
+      // ------------------------------------------------- FINE ----------------------------------------------------
+ ?>
 
-   </ul>
- </nav>
- <!-- ################################################################################################ -->
+</ul>
+</nav>
+<!-- ################################################################################################ -->
 </header>
 </div>
 <!-- ################################################################################################ -->
@@ -155,10 +224,11 @@ $userRow = mysqli_fetch_array($res, MYSQLI_ASSOC); //restituisco la riga sottofo
 </div>
 <!-- ################################################################################################ -->
 </div>
-<!-- End Top Background Image Wrapper -->
+<!-- fine navbar -->
 <!-- ################################################################################################ -->
 <!-- ################################################################################################ -->
 <!-- ################################################################################################ -->
+
 <div class="wrapper row4">
   <section class="hoc container clear"> 
     <!-- ################################################################################################ -->
@@ -217,112 +287,80 @@ $userRow = mysqli_fetch_array($res, MYSQLI_ASSOC); //restituisco la riga sottofo
 <!-- ################################################################################################ -->
 <!-- ################################################################################################ -->
 <!-- ################################################################################################ -->
-<div class="wrapper row3">
-  <main class="hoc container clear"> 
-    <!-- main body -->
-    <!-- ################################################################################################ -->
-    <div class="center btmspace-80">
-      <h2 class="heading nospace">Pellentesque mattis euismod</h2>
-      <p class="nospace">Semper donec commodo est at risus bibendum id hendrerit erat rhoncus duis varius</p>
-    </div>
-    <ul class="nospace group">
-      <li class="one_half first btmspace-30">
-        <article class="group">
-          <div class="one_half first"><a href="#"><img src="images/demo/320x240.png" alt=""></a></div>
-          <div class="one_half">
-            <h3 class="heading font-x1">Vestibulum risus donec</h3>
-            <p>Dapibus curabitur consectetur sapien eget porttitor accumsan turpis dui commodo metus in tristique odio sem eu&hellip;</p>
-            <footer><a href="#">Read More &raquo;</a></footer>
-          </div>
-        </article>
-      </li>
-      <li class="one_half btmspace-30">
-        <article class="group">
-          <div class="one_half first"><a href="#"><img src="images/demo/320x240.png" alt=""></a></div>
-          <div class="one_half">
-            <h3 class="heading font-x1">Varius ac felis eget</h3>
-            <p>Sociosqu litora torquent per conubia nostra per inceptos himenaeos curabitur non libero quis ligula congue quis&hellip;</p>
-            <footer><a href="#">Read More &raquo;</a></footer>
-          </div>
-        </article>
-      </li>
-      <li class="one_half first btmspace-30">
-        <article class="group">
-          <div class="one_half first"><a href="#"><img src="images/demo/320x240.png" alt=""></a></div>
-          <div class="one_half">
-            <h3 class="heading font-x1">Quam proin nisl magna</h3>
-            <p>Dignissim id leo quis tempor sollicitudin purus proin sed sem ex morbi consequat ipsum eu justo porttitor aliquam&hellip;</p>
-            <footer><a href="#">Read More &raquo;</a></footer>
-          </div>
-        </article>
-      </li>
-      <li class="one_half btmspace-30">
-        <article class="group">
-          <div class="one_half first"><a href="#"><img src="images/demo/320x240.png" alt=""></a></div>
-          <div class="one_half">
-            <h3 class="heading font-x1">Sollicitudin aptent</h3>
-            <p>Taciti sociosqu ad litora torquent per conubia nostra per inceptos himenaeos proin nulla nisi id pharetra nec ornare&hellip;</p>
-            <footer><a href="#">Read More &raquo;</a></footer>
-          </div>
-        </article>
-      </li>
-    </ul>
-    <!-- ################################################################################################ -->
-    <!-- / main body -->
-    <div class="clear"></div>
-  </main>
+
+</section>
 </div>
-<!-- ################################################################################################ -->
-<!-- ################################################################################################ -->
-<!-- ################################################################################################ -->
-<div class="wrapper bgded overlay" style="background-image:url('images/demo/backgrounds/02.png');">
-  <section class="hoc container clear"> 
+-
+<!--  -->
+<div class="wrapper row4">
+  <footer id="footer" class="hoc clear"> 
     <!-- ################################################################################################ -->
-    <div class="btmspace-80 center">
-      <h2 class="heading nospace">Semper turpis eget</h2>
-      <p class="nospace">Maximus arcu dictum a nunc molestie odio sit amet ipsum</p>
+    <div class="one_third first">
+      <h6 class="heading">est ut dolor tristique</h6>
+      <p>maecenas tempus vestibulum felis in efficitur sed facilisis urna metus interdum pretium mi dignissim et fusce.</p>
+      <p class="btmspace-15">sagittis tempor nullam iaculis dolor id condimentum cursus duis scelerisque ac metus amet laoreet vestibulum dictum.</p>
+      <ul class="faico clear">
+        <li><a class="faicon-facebook" href="#"><i class="fa fa-facebook"></i></a></li>
+        <li><a class="faicon-twitter" href="#"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="faicon-dribble" href="#"><i class="fa fa-dribbble"></i></a></li>
+        <li><a class="faicon-linkedin" href="#"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="faicon-google-plus" href="#"><i class="fa fa-google-plus"></i></a></li>
+        <li><a class="faicon-vk" href="#"><i class="fa fa-vk"></i></a></li>
+      </ul>
     </div>
-    <ul class="nospace group">
-      <li class="one_quarter first">
-        <article class="excerpt"><a href="#"><img src="images/demo/320x320.png" alt=""></a>
-          <div class="excerpttxt">
-            <h6 class="heading font-x1">Egestas consectetur</h6>
-            <p>Rhoncus lectus sed sagittis dictum phasellus tristique&hellip;</p>
-            <footer><a class="btn" href="#">Read More &raquo;</a></footer>
-          </div>
-        </article>
-      </li>
-      <li class="one_quarter">
-        <article class="excerpt"><a href="#"><img src="images/demo/320x320.png" alt=""></a>
-          <div class="excerpttxt">
-            <h6 class="heading font-x1">Aenean efficitur</h6>
-            <p>Eu fringilla maximus purus orci faucibus metus faucibus&hellip;</p>
-            <footer><a class="btn" href="#">Read More &raquo;</a></footer>
-          </div>
-        </article>
-      </li>
-      <li class="one_quarter">
-        <article class="excerpt"><a href="#"><img src="images/demo/320x320.png" alt=""></a>
-          <div class="excerpttxt">
-            <h6 class="heading font-x1">Blandit massa</h6>
-            <p>Lectus eu varius curabitur vestibulum vehicula massa&hellip;</p>
-            <footer><a class="btn" href="#">Read More &raquo;</a></footer>
-          </div>
-        </article>
-      </li>
-      <li class="one_quarter">
-        <article class="excerpt"><a href="#"><img src="images/demo/320x320.png" alt=""></a>
-          <div class="excerpttxt">
-            <h6 class="heading font-x1">Sagittis curabitur</h6>
-            <p>Et eros eget ligula efficitur pulvinar et tortor morbi&hellip;</p>
-            <footer><a class="btn" href="#">Read More &raquo;</a></footer>
-          </div>
-        </article>
-      </li>
-    </ul>
+    <div class="one_third">
+      <h6 class="heading">luctus vestibulum magna</h6>
+      <ul class="nospace linklist contact">
+        <li><i class="fa fa-map-marker"></i>
+          <address>
+            Street Name &amp; Number, Town, Postcode/Zip
+          </address>
+        </li>
+        <li><i class="fa fa-phone"></i> +00 (123) 456 7890</li>
+        <li><i class="fa fa-fax"></i> +00 (123) 456 7890</li>
+        <li><i class="fa fa-envelope-o"></i> info@domain.com</li>
+      </ul>
+    </div>
+    <div class="one_third">
+      <h6 class="heading">velit porttitor ac euismod</h6>
+      <ul class="nospace linklist">
+        <li>
+          <article>
+            <h2 class="nospace font-x1"><a href="#">ut porttitor sit amet</a></h2>
+            <time class="font-xs block btmspace-10" datetime="2045-04-06">Friday, 6<sup>th</sup> April 2045</time>
+            <p class="nospace">nunc sed eget augue varius dapibus mi eget lobortis risus nunc a leo&hellip;</p>
+          </article>
+        </li>
+        <li>
+          <article>
+            <h2 class="nospace font-x1"><a href="#">finibus commodo ex eu</a></h2>
+            <time class="font-xs block btmspace-10" datetime="2045-04-05">Thursday, 5<sup>th</sup> April 2045</time>
+            <p class="nospace">pharetra nam sit amet lacus tempor ipsum finibus luctus sed fringilla&hellip;</p>
+          </article>
+        </li>
+      </ul>
+
+    </div>
+    <p class="fl_left" >Copyright &copy; 2016 - All Rights Reserved - Humystop s.r.l</p> 
     <!-- ################################################################################################ -->
-  </section>
-</div>
-<?php
-        require __DIR__ . "/pages/bottom.php"
-        ?>
+    
+  </div>
+  <div class="wrapper row5">
+    <div id="copyright" class="hoc clear"> 
+      <!-- ################################################################################################ -->
+      
+      <!-- ################################################################################################ -->
+    </div>
+  </div>
+</footer>
+<!-- ################################################################################################ -->
+<!-- ################################################################################################ -->
+<!-- ################################################################################################ -->
+<a id="backtotop" href="#top"><i class="fa fa-chevron-up"></i></a>
+<!-- JAVASCRIPTS -->
+<script src="layout/scripts/jquery.min.js"></script>
+<script src="layout/scripts/jquery.backtotop.js"></script>
+<script src="layout/scripts/jquery.mobilemenu.js"></script>
+<script src="layout/chart/Chart.min.js"></script>
+</body>
+</html>
