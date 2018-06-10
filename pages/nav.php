@@ -134,8 +134,7 @@ a:visited {
      <li>
        <a class="drop" href="#">Dispositivi</a><!-- possibilità di aggiungere un dispositivo -->
        <ul>
-         <li><a href="dispositivo.php?s=a">Aggiungi</a></li>
-         <li><a href="dispositivo.php?s=v">Visualizza</a></li>
+         <li><a href="dispositivo.php?s=a">Aggiungi</a></li>       
        </ul>
      </li>
    <?php } ?>

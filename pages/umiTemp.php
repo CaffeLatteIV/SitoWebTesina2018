@@ -39,7 +39,8 @@ require __DIR__ . "/nav.php" //carico la navbar
 
 
 <script src="../layout/chart/Chart.min.js"></script>
-<script>
+
+<script type="text/javascript">
   var config = {
     type: 'line',
     data: {

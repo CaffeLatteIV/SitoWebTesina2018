@@ -38,7 +38,7 @@ if (isset($_POST['signup'])) {
 
         $user_id = mysqli_insert_id($conn);
         if ($user_id > 0) {
-            $_SESSION['user'] = $user_id; // impostola session e reindirizzso alla homepage
+            $_SESSION['user'] = $user_id; // imposto la session e reindirizzso alla homepage
             if (isset($_SESSION['user'])) {
                 print_r($_SESSION);
                 header("Location: ../index.php");

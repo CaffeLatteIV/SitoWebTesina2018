@@ -150,8 +150,7 @@ $_SESSION['id'] = $userRow["id"];
      <li>
        <a class="drop" href="#">Dispositivi</a><!-- possibilità di aggiungere un dispositivo -->
        <ul>
-         <li><a href="pages/dispositivo.php?s=a">Aggiungi</a></li>
-         <li><a href="pages/dispositivo.php?s=v">Visualizza</a></li>
+         <li><a href="pages/dispositivo.php?s=a">Aggiungi</a></li>        
        </ul>
      </li>
    <?php } ?>

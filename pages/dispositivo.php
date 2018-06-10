@@ -5,8 +5,9 @@ require_once '../model/dbconnect.php';
 $login = false; //default false
 $operazione = filter_input(INPUT_GET, 's', FILTER_SANITIZE_STRING);
 //controllo se l'utente abbia già fatto il log in
-if (!isset($_SESSION['user']) && $_SESSION['user'] == "" ) {
- header("Location: ../index.php");
+if (!isset($_SESSION['user']) && $_SESSION['user'] == "" ) { 
+    //non ha effettuato il login
+  header("Location: ../index.php");
 
 }else{
 // seleziono i dati dell'utente
@@ -20,48 +21,65 @@ if (isset($_POST['btn-dispositivo'])) {//se è stato premuto il bottone --> aggi
   $nDispositivo = filter_input(INPUT_POST, 'nDispositivo', FILTER_SANITIZE_STRING); //analizzo il @param nDispositivo per evitare manipolazioni
   $cDispositivo = filter_input(INPUT_POST, 'cDispositivo', FILTER_SANITIZE_STRING); //analizzo il @param cDispositivo per evitare manipolazioni
 
-  //controllo che il codice esista
+  //controllo che il codice NON ESISTA nella tabella dei dispositivi
   $stmt = $conn->prepare("SELECT codice  FROM dispositivo WHERE codice=?");
   $stmt->bind_param("s", $cDispositivo);
   $stmt->execute();
   $result = $stmt->get_result();
   $stmt->close();
 
-  $count = $result->num_rows;
+  $cDis = $result->num_rows; 
 
-  echo $count;
+  //controllo che il codice ESISTA nella tabella delle misurazioni
+  $stmt = $conn->prepare("SELECT codice  FROM misurazioni WHERE codice=?");
+  $stmt->bind_param("s", $cDispositivo);
+  $stmt->execute();
+  $result = $stmt->get_result();
+  $stmt->close();
 
-    if ($count == 0 ) { // controllo che il codice non esista nella tabella dispositivo 
-      $stmts = $conn->prepare("INSERT INTO dispositivo(proprietario,codice,nome) VALUES(?,?, ?)");
-      $stmts->bind_param("sss", $_SESSION["id"],$cDispositivo, $nDispositivo);
+  $cMis = $result->num_rows;
+
+  //echo $cDis." ".$cMis; controllo 
+
+    if ($cDis >0 ) {// dispositivo  è GIA STATO AGGIUNTO alla tabella dispositivi
+      $errMSG = "Errore, dispositivo già registrato";// messaggio di errore
+    }elseif ($cMis == 0) { // dispositivo non eisite nella tabella delle misurazioni
+      # code...
+      $errMSG = "Errore, dati inseriti non correttamente"; // messaggio di errore
+    }else{ // altrimenti aggiungi dispositivo
+
+      date_default_timezone_set("Europe/Rome"); //imposto la data italiana
+
+      $stmts = $conn->prepare("INSERT INTO dispositivo(proprietario,codice,nome,data) VALUES(?,?, ?,?)");
+      $stmts->bind_param("ssss", $_SESSION["id"],$cDispositivo, $nDispositivo,date("d/m/Y"));
       $res = $stmts->execute();
       $stmts->close();
-      header("Location: dispositivo.php?s=v");
-    } else $errMSG = "Errore, dispositivo già registrato"; //altrimenti --> messaggio di errore
+      header("Location: dispositivo.php?s=v"); //reindirizzaa alla pagina di visualizzazione dei dispositivi
+    }
   }
+    ?>
 
-  ?>
-  <?php
-  require __DIR__ . "/nav.php"
-  ?>
-<style type="text/css">
+    <?php
+    require __DIR__ . "/nav.php"
+    ?>
+    <style type="text/css">
 
-table {
-    border-collapse: collapse;
-    border-spacing: 0;
-    width: 100%;
-    border: 1px solid #ddd;
-}
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      width: 100%;
+      border: 1px solid #ddd;
+    }
 
-th, td {
-    text-align: left;
-    padding: 1%;
-}
+    th, td {
+      text-align: left;
+      padding: 1%;
+    }
 
-tr:nth-child(even) {
-    background-color: #f2f2f2
-}
-</style>
+    tr:nth-child(even) {
+      background-color: #f2f2f2
+    }
+  </style>
   <div class="wrapper row3">
     <main class="hoc container clear"> 
       <!-- main body -->
@@ -130,9 +148,9 @@ tr:nth-child(even) {
               $query = $conn->query("SELECT * FROM  dispositivo WHERE proprietario=" . $_SESSION['id']); //query per visualizzare informazioni riguardo i propri dispositivi
               ?>
               <table>
-                <th>Identificativo</th>
-                <th>Nome dispositivo</th>
                 <th>Codice</th>
+                <th>Nome dispositivo</th>
+                <th>Data registrazione</th>
 
 
                 <?php
@@ -142,26 +160,26 @@ tr:nth-child(even) {
 
           ?>
           <tr> 
-            <td><?php echo $riga["id"]?></td>
-            <td><?php echo $riga["nome"]?></td>
             <td><?php echo $riga["codice"]?></td>
+            <td><?php echo $riga["nome"]?></td>
+            <td><?php echo $riga["data"]?></td>
           </tr>
 
 
-            <?php 
+          <?php 
 
-          }}?>
+        }}?>
 
-        </table>
-        <?php
-      } ?>
+      </table>
+      <?php
+    } ?>
 
-    </div>
-    <!-- ################################################################################################ -->
   </div>
   <!-- ################################################################################################ -->
-  <!-- / main body -->
-  <div class="clear"></div>
+</div>
+<!-- ################################################################################################ -->
+<!-- / main body -->
+<div class="clear"></div>
 </main>
 </div>
 <?php
