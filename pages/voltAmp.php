@@ -12,6 +12,15 @@ if (isset($_SESSION['user']) && $_SESSION['user'] != "" ) {
 $res = $conn->query("SELECT * FROM users WHERE id=" . $_SESSION['user']); //trovo l'utente nel database
 $userRow = mysqli_fetch_array($res, MYSQLI_ASSOC); //restituisco la riga sottoforma di array associativo 
 }
+
+if ($_SESSION["admin"]) {
+  # code...
+  $proprietario = $_GET["id"];
+} else {
+  # code...
+  $proprietario = $_SESSION['id'];
+}
+
 ?>
 
 <?php
@@ -25,10 +34,11 @@ require __DIR__ . "/nav.php" //carico la navbar
   <main class="hoc clear"> 
     <div class="content"> 
       <div style="width:100%;">
-        <canvas id="grafico"></canvas><!-- grafico -->
+        <canvas id="grafico"></canvas>
       </div>
     </div>
   </main>
+  </div>
 <!-- ################################################################################################ -->
 
 
@@ -41,7 +51,7 @@ require __DIR__ . "/nav.php" //carico la navbar
     data: {
       labels: [<?php 
 
-         $dUmidita = $conn->query("SELECT m.data FROM misurazioni as m, dispositivo as d WHERE d.proprietario=" . $_SESSION['id']." && anno=".$anno); //query data
+         $dUmidita = $conn->query("SELECT m.data FROM misurazioni as m, dispositivo as d WHERE d.proprietario=" .$proprietario."&& d.codice = m.codice && anno=".$anno." ORDER BY m.id "); //query data
          while ($rUmidita = $dUmidita->fetch_assoc()) { //@param rUmidita = riga restituita dalla query, @param dUmidita = data
           $data = explode("-", $rUmidita["data"]);
           echo "'".$data[2]."/".$data[1]."',";
@@ -54,7 +64,7 @@ require __DIR__ . "/nav.php" //carico la navbar
         borderColor: "#FFA000",
         data: [<?php 
 
-         $query = $conn->query("SELECT m.volt FROM misurazioni as m, dispositivo as d WHERE d.proprietario=" . $_SESSION['id']." && anno=".$anno); //query valori umidità
+         $query = $conn->query("SELECT m.volt FROM misurazioni as m, dispositivo as d WHERE d.proprietario=" . $proprietario."&& d.codice = m.codice && anno=".$anno." ORDER BY m.id "); //query valori umidità
          while ($riga = $query->fetch_assoc()) {
           echo $riga["volt"].",";
         };
@@ -68,7 +78,7 @@ require __DIR__ . "/nav.php" //carico la navbar
         borderColor: "#388E3C",
         data: [<?php 
 
-         $query = $conn->query("SELECT m.ampere FROM misurazioni as m, dispositivo as d WHERE d.proprietario=" . $_SESSION['id']." && anno=".$anno); //query valori umidità
+         $query = $conn->query("SELECT m.ampere FROM misurazioni as m, dispositivo as d WHERE d.proprietario=" . $proprietario."&& d.codice = m.codice && anno=".$anno." ORDER BY m.id "); //query valori umidità
          while ($riga = $query->fetch_assoc()) {
           echo $riga["ampere"].",";
         };

@@ -5,55 +5,80 @@ require_once '../model/dbconnect.php';
 $login = false; //default false
 
 if (isset($_POST['btn-login'])) {
+  //parametri ricevuti tramite metodo POST
   $email = $_POST['email'];
   $upass = $_POST['pass'];
+  $password = hash('sha256', $upass);// calcolo l'hash della password (SHA256)
 
-    $password = hash('sha256', $upass); // calcolo l'hash della password (SHA256)
-    $stmt = $conn->prepare("SELECT id, username, password FROM users WHERE email= ?"); // cerco id, username e password per verificare che l'utente esista davvero
-    $stmt->bind_param("s", $email);
-    /* eseguo la query */
-    $stmt->execute();
+  //controlo se l'accesso sia stato effettuato da un admin
+  $admin = $conn->prepare("SELECT id, username, password FROM admin WHERE email= ?"); 
+  $admin->bind_param("s", $email);
+  /* eseguo la query */
+  $admin->execute();
     //get result
-    $res = $stmt->get_result();
-    $stmt->close();
+  $result = $admin->get_result();
+  $admin->close();
+  $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
-    $row = mysqli_fetch_array($res, MYSQLI_ASSOC);
+  if ($result->num_rows==1 && $row['password'] == $password) {
+      # code...
+   $_SESSION['user'] = $row['id'];
+   $_SESSION["admin"]= true;
+   header("Location: ../index.php");
+ } else {
+  $_SESSION["admin"]= false;
+}
 
-    $count = $res->num_rows;
-    
+
+if ($_SESSION["admin"]==false) {
+       # code...
+          $stmt = $conn->prepare("SELECT id, username, password FROM users WHERE email= ? "); // cerco id, username e password per verificare che l'utente esista davvero
+          $stmt->bind_param("s", $email);
+          /* eseguo la query */
+          $stmt->execute();
+         //get result
+          $res = $stmt->get_result();
+          $stmt->close();
+
+          $row = mysqli_fetch_array($res, MYSQLI_ASSOC);
+          $count = $res->num_rows;
+
     if ($count == 1 && $row['password'] == $password) { // controllo che le password corrispondano
       $_SESSION['user'] = $row['id'];
       header("Location: ../index.php");
     } else $errMSG = "Dati di accesso non validi"; //altrimenti --> messaggio di errore
   }
+} 
 
-  ?>
-  <?php
+
+
+?>
+<?php
 require __DIR__ . "/nav.php"
 ?>
 </div>
-  <div class="wrapper row3">
-    <main class="hoc container clear"> 
-      <!-- main body -->
+<div class="wrapper row3">
+  <main class="hoc container clear"> 
+    <!-- main body -->
+    <!-- ################################################################################################ -->
+    <div class="content"> 
       <!-- ################################################################################################ -->
-      <div class="content"> 
-        <!-- ################################################################################################ -->
-        
 
-        <div id="login-form">
-          <form method="post" autocomplete="off">
 
-            <div class="col-md-12">
+      <div id="login-form">
+        <form method="post" autocomplete="off">
 
-              <div class="form-group">
-                <h2 class="">Login</h2>
-              </div>
+          <div class="col-md-12">
 
-              <div class="form-group">
-                <hr/>
-              </div>
+            <div class="form-group">
+              <h2 class="">Login</h2>
+            </div>
 
-              <?php
+            <div class="form-group">
+              <hr/>
+            </div>
+
+            <?php
               if (isset($errMSG)) { //stampo il messaggio di errore
 
                 ?>

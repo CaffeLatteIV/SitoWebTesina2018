@@ -16,30 +16,41 @@ $userRow = mysqli_fetch_array($res, MYSQLI_ASSOC); //restituisco la riga sottofo
 $_SESSION['id'] = $userRow["id"];
 }
 ?>
+
 <!DOCTYPE php>
 <php>
   <head>
     <title>Humystop</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" href="layout/styles/bootstrap.min.css" type="text/css"/>
-    <link href="layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
-    <style type="text/css">
-    a:link {
-      text-decoration: none;
-    }
+    <?php if (isset($_SESSION["admin"]) && $_SESSION["admin"] == true) {
+      $admin = true;
+    } else {
+     $admin = false;
+   }
+   ?>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   <link rel="stylesheet" href="layout/styles/bootstrap.min.css" type="text/css"/>
+   <link href="layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
+   <style type="text/css">
+   a:link {
+    text-decoration: none;
+  }
 
-    a:visited {
-      text-decoration: none;
-    }
-  </style>
+  a:visited {
+    text-decoration: none;
+  }
+  i.my{
+    background-color: #FF5723;
+  }
+
+</style>
 </head>
 <body id="top">
   <!-- ################################################################################################ -->
   <!-- ################################################################################################ -->
   <!-- ################################################################################################ -->
   <!-- Immagine di background -->
-  <div class="bgded overlay" style="background-image:url('images/demo/backgrounds/01.png');"> 
+  <div class="bgded overlay" style="background-image:url('images/nav.png');"> 
     <!-- ################################################################################################ -->
     <div class="wrapper row1">
       <header id="header" class="hoc clear"> 
@@ -50,44 +61,23 @@ $_SESSION['id'] = $userRow["id"];
         <nav id="mainav" class="fl_right">
           <ul class="clear">
             <li class="active"><a href="#">Home</a></li>
-            <li><a class="drop" href="#">Pages</a>
-              <ul>
-                <li><a href="gallery.php">Gallery</a></li>
-                <li><a href="full-width.php">Full Width</a></li>
-                <li><a href="sidebar-left.php">Sidebar Left</a></li>
-                <li><a href="sidebar-right.php">Sidebar Right</a></li>
-                <li><a href="basic-grid.php">Basic Grid</a></li>
-              </ul>
-            </li>
-            <li><a class="drop" href="#">Dropdown</a>
-              <ul>
-                <li><a href="#">Level 2</a></li>
-                <li><a class="drop" href="#">Level 2 + Drop</a>
-                  <ul>
-                    <li><a href="#">Level 3</a></li>
-                    <li><a href="#">Level 3</a></li>
-                    <li><a href="#">Level 3</a></li>
-                  </ul>
-                </li>
-                <li><a href="#">Level 2</a></li>
-              </ul>
-            </li>
+            
             <li><a href="pages/info.php">Chi siamo</a></li>
             <?php 
-      if(!$login){ //se l'utente NON ha ancora effettuato il login 
-      
+       if(!$login && !$admin){ //se l'utente NON ha ancora effettuato il login e NON è amministratore
+
       //-------------------------------------------stampa bottoni per login-----------------------------------------
-      ?>
-      <li><a href="pages/login.php">Login </a></li>
-      <li><a href="pages/register.php">registrati </a></li>
+       ?>
+       <li><a href="pages/login.php">Login </a></li>
+       <li><a href="pages/register.php">registrati </a></li>
 
-    <?php };
+     <?php };
       // ------------------------------------------------- FINE ----------------------------------------------------
-    ?>
+     ?>
 
-    <?php
+     <?php
 
-      if($login){//se l'utente ha effettuato l'accesso
+     if($login && !$admin){//se l'utente ha effettuato l'accesso e NON è amministratore
       
         //-------------------------------- -------------- stampa ---------------------------------------------------
 
@@ -113,7 +103,7 @@ $_SESSION['id'] = $userRow["id"];
 
 
                   ?>
-                  <li><a href="pages/umiTemp.php?y=<?php echo $riga['anno']//passo all il @param anno alla pagina ?>"><?php echo $riga["anno"] ?></a></li>
+                  <li><a href="pages/umiTemp.php?y=<?php echo $riga['anno']//passo il @param anno alla pagina ?>"><?php echo $riga["anno"] ?></a></li>
 
 
                   <?php
@@ -128,7 +118,7 @@ $_SESSION['id'] = $userRow["id"];
                 while ($riga = $queryVA->fetch_assoc()) {
                 // ordino le misurazioni per anno (decrescente)
                   ?>
-                  <li><a href="pages/voltAmp.php?y=<?php echo $riga['anno']//passo all il @param anno alla pagina ?>"><?php echo $riga["anno"] ?></a></li>
+                  <li><a href="pages/voltAmp.php?y=<?php echo $riga['anno']//passo il @param anno alla pagina ?>"><?php echo $riga["anno"] ?></a></li>
                   <?php
                 };
                 ?>
@@ -162,7 +152,26 @@ $_SESSION['id'] = $userRow["id"];
        </li>
      </ul>
    </li>
- <?php };
+ <?php 
+ }
+    elseif ($admin == true && $login == true) {
+                # code...
+?>
+  <li>
+     <a class="drop" href="#">Dispositivi</a>
+     <ul>
+       <li><a href="pages/dispositivo.php?s=va">Visualizza</a></li> <!-- @param va = "visualizza da amministratore" -->       
+     </ul>
+   </li>
+ <li>
+     <a class="drop" href="#"><?php echo "AMMINISTRATORE" ?></a>
+     <ul>
+      <li><a  href="#">ID: <?php echo $_SESSION["user"] ?></a></li>
+       <li><a href="pages/logout.php?logout">Disconnettiti</a></li>
+     </ul>
+   </li>
+ <?php
+ }
       // ------------------------------------------------- FINE ----------------------------------------------------
  ?>
 
@@ -174,108 +183,41 @@ $_SESSION['id'] = $userRow["id"];
 <!-- ################################################################################################ -->
 <!-- ################################################################################################ -->
 <!-- ################################################################################################ -->
-<div id="pageintro" class="hoc clear"> 
-  <!-- ################################################################################################ -->
-  <div class="flexslider basicslider">
-    <ul class="slides">
-      <li>
-        <article>
-          <p class="heading">Cum sociis natoque penatibus</p>
-          <h2 class="heading">Tincidunt nec venenatis etiam tellus</h2>
-          <p>Et magnis dis montes ridiculus mus sed mi eros molestie eget mauris</p>
-          <footer>
-            <ul class="nospace inline pushright">
-              <li><a class="btn" href="#">Parturient</a></li>
-              <li><a class="btn inverse" href="#">Nascetur</a></li>
-            </ul>
-          </footer>
-        </article>
-      </li>
-      <li>
-        <article>
-          <p class="heading">Urna gravida eget consequat</p>
-          <h2 class="heading">Rhoncus pharetra ligula vestibulum</h2>
-          <p>Sed varius dui eget convallis nibh lectus ultricies lacus ac auctor lacus</p>
-          <footer>
-            <ul class="nospace inline pushright">
-              <li><a class="btn" href="#">Consequat</a></li>
-              <li><a class="btn inverse" href="#">Phasellus</a></li>
-            </ul>
-          </footer>
-        </article>
-      </li>
-      <li>
-        <article>
-          <p class="heading">Porta congue lacus eleifend</p>
-          <h2 class="heading">Efficitur porta quisque nisl odio suscipit</h2>
-          <p>Ante et velit in elit sapien vulputate non mattis ut euismod sed nisi</p>
-          <footer>
-            <ul class="nospace inline pushright">
-              <li><a class="btn" href="#">Accumsan</a></li>
-              <li><a class="btn inverse" href="#">Molestie</a></li>
-            </ul>
-          </footer>
-        </article>
-      </li>
-    </ul>
-  </div>
-  <!-- ################################################################################################ -->
-</div>
+
+
 <!-- ################################################################################################ -->
 </div>
+
 <!-- fine navbar -->
 <!-- ################################################################################################ -->
 <!-- ################################################################################################ -->
 <!-- ################################################################################################ -->
 
-<div class="wrapper row4">
+<div class="wrapper row3">
   <section class="hoc container clear"> 
     <!-- ################################################################################################ -->
     <div class="center btmspace-80">
-      <h2 class="heading nospace">Vehicula donec dignissim</h2>
-      <p class="nospace">Varius porta maecenas vestibulum efficitur elit eu lacinia massa</p>
+      <h1 class="heading nospace">Humystop</h1>
+      <p class="nospace">- Your problem, our solution -</p>
     </div>
     <ul class="nospace group services">
       <li class="one_third first">
-        <article><a href="#"><i class="fa fa-500px"></i></a>
-          <h6 class="heading">Hendrerit quis lorem</h6>
-          <p>Iaculis sagittis sapien at porta justo rhoncus sed etiam et metus justo quisque&hellip;</p>
-          <footer><a href="#">Read More &raquo;</a></footer>
+        <article><a href="#"><i class="fa fa-balance-scale my"></i></a>
+          <h6 class="heading">Economico</h6>
+          <p>Il dispositivo è stato ideato con un design di alta qualità per offire performace ottimali in ogni ambiente, il  tutto al minor prezzo sul mercato.</p>
+          
         </article>
       </li>
       <li class="one_third">
-        <article><a href="#"><i class="fa fa-adjust"></i></a>
-          <h6 class="heading">Consectetur adipiscing</h6>
-          <p>Vulputate lorem eu laoreet orci blandit at nullam sed venenatis magna phasellus ac&hellip;</p>
-          <footer><a href="#">Read More &raquo;</a></footer>
+        <article><a href="#"><i class="fa fa-500px my"></i></a>
+          <h6 class="heading">Semplice</h6>
+          <p>Installazione veloce, grazie ai nostri validi tecnici. I dati rilevati sono facilemente consultabili dal sito.</p>
         </article>
       </li>
       <li class="one_third">
-        <article><a href="#"><i class="fa fa-empire"></i></a>
-          <h6 class="heading">Maecenas scelerisque</h6>
-          <p>Molestie odio a convallis purus donec lobortis eget ligula nec tincidunt vivamus ut&hellip;</p>
-          <footer><a href="#">Read More &raquo;</a></footer>
-        </article>
-      </li>
-      <li class="one_third first">
-        <article><a href="#"><i class="fa fa-medium"></i></a>
-          <h6 class="heading">Lectus ligula interdum</h6>
-          <p>Dolor in hac habitasse platea dictumst suspendisse porttitor justo nec mauris semper&hellip;</p>
-          <footer><a href="#">Read More &raquo;</a></footer>
-        </article>
-      </li>
-      <li class="one_third">
-        <article><a href="#"><i class="fa fa-scissors"></i></a>
-          <h6 class="heading">Varius nullam iaculis</h6>
-          <p>Libero luctus pellentesque vel pretium erat praesent id ante sed diam condimentum&hellip;</p>
-          <footer><a href="#">Read More &raquo;</a></footer>
-        </article>
-      </li>
-      <li class="one_third">
-        <article><a href="#"><i class="fa fa-share-alt"></i></a>
-          <h6 class="heading">Cursus ultrices integer</h6>
-          <p>A eros laoreet convallis fusce sollicitudin elit non velit eleifend consequat phasellus&hellip;</p>
-          <footer><a href="#">Read More &raquo;</a></footer>
+        <article><a href="#"><i class="fa fa-fast-forward my"></i></a>
+          <h6 class="heading">Dinamico</h6>
+          <p>Il dispositivo è stato sviluppato per conformarsi a seconda delle esigenze del consumatore esemplificando il più possibile ogni sua operazione </p>
         </article>
       </li>
     </ul>
@@ -289,15 +231,15 @@ $_SESSION['id'] = $userRow["id"];
 
 </section>
 </div>
--
-<!--  -->
+
+
 <div class="wrapper row4">
   <footer id="footer" class="hoc clear"> 
     <!-- ################################################################################################ -->
     <div class="one_third first">
-      <h6 class="heading">est ut dolor tristique</h6>
-      <p>maecenas tempus vestibulum felis in efficitur sed facilisis urna metus interdum pretium mi dignissim et fusce.</p>
-      <p class="btmspace-15">sagittis tempor nullam iaculis dolor id condimentum cursus duis scelerisque ac metus amet laoreet vestibulum dictum.</p>
+      <h6 class="heading">Humystop s.r.l.</h6><br><br>
+      <p>Seguici sui vari social per rimanere al corrente di tutte le nostre news!</p><br><br>
+      
       <ul class="faico clear">
         <li><a class="faicon-facebook" href="#"><i class="fa fa-facebook"></i></a></li>
         <li><a class="faicon-twitter" href="#"><i class="fa fa-twitter"></i></a></li>
@@ -305,49 +247,55 @@ $_SESSION['id'] = $userRow["id"];
         <li><a class="faicon-linkedin" href="#"><i class="fa fa-linkedin"></i></a></li>
         <li><a class="faicon-google-plus" href="#"><i class="fa fa-google-plus"></i></a></li>
         <li><a class="faicon-vk" href="#"><i class="fa fa-vk"></i></a></li>
+
       </ul>
+
     </div>
+
     <div class="one_third">
-      <h6 class="heading">luctus vestibulum magna</h6>
+      <h6 class="heading">Dove trovarci</h6>
       <ul class="nospace linklist contact">
         <li><i class="fa fa-map-marker"></i>
           <address>
-            Street Name &amp; Number, Town, Postcode/Zip
+            Bologna, via dei mille 12/B
           </address>
         </li>
-        <li><i class="fa fa-phone"></i> +00 (123) 456 7890</li>
-        <li><i class="fa fa-fax"></i> +00 (123) 456 7890</li>
-        <li><i class="fa fa-envelope-o"></i> info@domain.com</li>
+        <li><i class="fa fa-phone"></i>+39 5622884596</li>
+        <li><i class="fa fa-fax"></i> +39 0512884596</li>
+        <li><i class="fa fa-envelope-o"></i> info@humystop.com</li>
       </ul>
     </div>
     <div class="one_third">
-      <h6 class="heading">velit porttitor ac euismod</h6>
+      <h6 class="heading">Chi siamo</h6>
       <ul class="nospace linklist">
         <li>
           <article>
-            <h2 class="nospace font-x1"><a href="#">ut porttitor sit amet</a></h2>
-            <time class="font-xs block btmspace-10" datetime="2045-04-06">Friday, 6<sup>th</sup> April 2045</time>
-            <p class="nospace">nunc sed eget augue varius dapibus mi eget lobortis risus nunc a leo&hellip;</p>
+            <h2 class="nospace font-x1"><a href="#">Gianmarco Cavazza</a></h2>
+            <br>
+            <p class="nospace">Studente 5Ci IIS Belluzzi-Fioravanti</p>
           </article>
         </li>
         <li>
           <article>
-            <h2 class="nospace font-x1"><a href="#">finibus commodo ex eu</a></h2>
-            <time class="font-xs block btmspace-10" datetime="2045-04-05">Thursday, 5<sup>th</sup> April 2045</time>
-            <p class="nospace">pharetra nam sit amet lacus tempor ipsum finibus luctus sed fringilla&hellip;</p>
+            <h2 class="nospace font-x1"><a href="#">Mattia Babbini</a></h2>
+            <br>
+            <p class="nospace">Studente 5Ci IIS Belluzzi-Fioravanti</p>
+            <br><br><br>
+
           </article>
         </li>
       </ul>
 
     </div>
+    
     <p class="fl_left" >Copyright &copy; 2016 - All Rights Reserved - Humystop s.r.l</p> 
     <!-- ################################################################################################ -->
-    
+
   </div>
   <div class="wrapper row5">
     <div id="copyright" class="hoc clear"> 
       <!-- ################################################################################################ -->
-      
+
       <!-- ################################################################################################ -->
     </div>
   </div>
@@ -360,6 +308,5 @@ $_SESSION['id'] = $userRow["id"];
 <script src="layout/scripts/jquery.min.js"></script>
 <script src="layout/scripts/jquery.backtotop.js"></script>
 <script src="layout/scripts/jquery.mobilemenu.js"></script>
-<script src="layout/chart/Chart.min.js"></script>
 </body>
 </html>

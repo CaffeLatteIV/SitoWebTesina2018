@@ -4,17 +4,24 @@
 <!DOCTYPE html>
 <head>
   <title>Humystop</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <link rel="stylesheet" href="../layout/styles/bootstrap.min.css" type="text/css"/>
-  <link href="../layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
-  <style type="text/css">
-  a:link {
-    text-decoration: none;
+
+  <?php if (isset($_SESSION["admin"]) && $_SESSION["admin"] == true) {
+    $admin = true;
+  } else {
+   $admin = false;
+ }
+ ?>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+ <link rel="stylesheet" href="../layout/styles/bootstrap.min.css" type="text/css"/>
+ <link href="../layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
+ <style type="text/css">
+ a:link {
+  text-decoration: none;
 }
 
 a:visited {
-    text-decoration: none;
+  text-decoration: none;
 }
 </style>
 </head>
@@ -23,7 +30,7 @@ a:visited {
   <!-- ################################################################################################ -->
   <!-- ################################################################################################ -->
   <!-- Immagine di background -->
-  <div class="bgded overlay" style="background-image:url('../images/demo/backgrounds/01.png');"> 
+  <div class="bgded overlay" style="background-image:url('../images/nav.png');"> 
     <!-- ################################################################################################ -->
     <div class="wrapper row1">
       <header id="header" class="hoc clear"> 
@@ -34,31 +41,10 @@ a:visited {
         <nav id="mainav" class="fl_right">
           <ul class="clear">
             <li><a href="../index.php">Home</a></li>
-            <li><a class="drop" href="#">Pages</a>
-              <ul>
-                <li><a href="gallery.php">Gallery</a></li>
-                <li><a href="full-width.php">Full Width</a></li>
-                <li><a href="sidebar-left.php">Sidebar Left</a></li>
-                <li><a href="sidebar-right.php">Sidebar Right</a></li>
-                <li><a href="basic-grid.php">Basic Grid</a></li>
-              </ul>
-            </li>
-            <li><a class="drop" href="#">Dropdown</a>
-              <ul>
-                <li><a href="#">Level 2</a></li>
-                <li><a class="drop" href="#">Level 2 + Drop</a>
-                  <ul>
-                    <li><a href="#">Level 3</a></li>
-                    <li><a href="#">Level 3</a></li>
-                    <li><a href="#">Level 3</a></li>
-                  </ul>
-                </li>
-                <li><a href="#">Level 2</a></li>
-              </ul>
-            </li>
+            
             <li><a href="info.php">Chi siamo</a></li>
             <?php 
-		  if(!$login){ //se l'utente NON ha ancora effettuato il login 
+		  if(!$login && !$admin){ //se l'utente NON ha ancora effettuato il login e NON è amministratore
 		  
 		  //-------------------------------------------stampa bottoni per login-----------------------------------------
      ?>
@@ -71,7 +57,7 @@ a:visited {
 
    <?php
 
-   if($login){//se l'utente ha effettuato l'accesso
+   if($login && !$admin){//se l'utente ha effettuato l'accesso e NON è amministratore
    
         //-------------------------------- -------------- stampa ---------------------------------------------------
 
@@ -112,7 +98,7 @@ a:visited {
                 while ($riga = $queryVA->fetch_assoc()) {
                 // ordino le misurazioni per anno (decrescente)
                   ?>
-                  <li><a href="voltAmp.php?y=<?php echo $riga['anno']//passo all il @param anno alla pagina ?>"><?php echo $riga["anno"] ?></a></li>
+                  <li><a href="voltAmp.php?y=<?php echo $riga['anno']//passo all il @param anno,codice alla pagina ?>"><?php echo $riga["anno"] ?></a></li>
                   <?php
                 };
                 ?>
@@ -145,7 +131,26 @@ a:visited {
        <li><a href="logout.php?logout">Disconnettiti</a></li>
      </ul>
    </li>
- <?php };
+ <?php
+  }
+    elseif ($admin == true && $login == true) {
+                # code...
+?>
+  <li>
+     <a class="drop" href="#">Dispositivi</a>
+     <ul>
+       <li><a href="dispositivo.php?s=va">Visualizza</a></li> <!-- @param va = "visualizza da amministratore" -->
+     </ul>
+   </li>
+ <li>
+     <a class="drop" href="#"><?php echo "AMMINISTRATORE" ?></a>
+     <ul>
+      <li><a href="#">ID: <?php echo $_SESSION["user"] ?></a></li>
+       <li><a href="logout.php?logout">Disconnettiti</a></li>
+     </ul>
+   </li>
+ <?php
+ }
       // ------------------------------------------------- FINE ----------------------------------------------------
  ?>
 

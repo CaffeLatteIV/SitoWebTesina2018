@@ -9,12 +9,15 @@ if (!isset($_SESSION['user']) && $_SESSION['user'] == "" ) {
     //non ha effettuato il login
   header("Location: ../index.php");
 
-}else{
+}elseif (!$_SESSION["admin"]) {
+  
 // seleziono i dati dell'utente
-$res = $conn->query("SELECT * FROM users WHERE id=" . $_SESSION['user']); //trovo l'utente nel database
-$userRow = mysqli_fetch_array($res, MYSQLI_ASSOC); //restituisco la riga sottoforma di array associativo 
-$login = true;
-}
+  $res = $conn->query("SELECT * FROM users WHERE id=" . $_SESSION['user']); //trovo l'utente nel database
+  $userRow = mysqli_fetch_array($res, MYSQLI_ASSOC); //restituisco la riga sottoforma di array associativo 
+
+}$login = true;
+
+
 
 if (isset($_POST['btn-dispositivo'])) {//se è stato premuto il bottone --> aggiungi dispositivo
 
@@ -30,22 +33,15 @@ if (isset($_POST['btn-dispositivo'])) {//se è stato premuto il bottone --> aggi
 
   $cDis = $result->num_rows; 
 
-  //controllo che il codice ESISTA nella tabella delle misurazioni
-  $stmt = $conn->prepare("SELECT codice  FROM misurazioni WHERE codice=?");
-  $stmt->bind_param("s", $cDispositivo);
-  $stmt->execute();
-  $result = $stmt->get_result();
-  $stmt->close();
 
-  $cMis = $result->num_rows;
 
-  //echo $cDis." ".$cMis; controllo 
+  //echo $cDis //controllo 
 
     if ($cDis >0 ) {// dispositivo  è GIA STATO AGGIUNTO alla tabella dispositivi
       $errMSG = "Errore, dispositivo già registrato";// messaggio di errore
-    }elseif ($cMis == 0) { // dispositivo non eisite nella tabella delle misurazioni
+    }elseif ($cDis == 0) { // dispositivo non eisite nella tabella delle misurazioni
       # code...
-      $errMSG = "Errore, dati inseriti non correttamente"; // messaggio di errore
+      $errMSG = "Errore, ricontrollare i dati inseriti"; // messaggio di errore
     }else{ // altrimenti aggiungi dispositivo
 
       date_default_timezone_set("Europe/Rome"); //imposto la data italiana
@@ -56,37 +52,38 @@ if (isset($_POST['btn-dispositivo'])) {//se è stato premuto il bottone --> aggi
       $stmts->close();
       header("Location: dispositivo.php?s=v"); //reindirizzaa alla pagina di visualizzazione dei dispositivi
     }
+
   }
-    ?>
+  ?>
 
-    <?php
-    require __DIR__ . "/nav.php"
-    ?>
-    <style type="text/css">
+  <?php
+  require __DIR__ . "/nav.php"
+  ?>
+  <style type="text/css">
 
-    table {
-      border-collapse: collapse;
-      border-spacing: 0;
-      width: 100%;
-      border: 1px solid #ddd;
-    }
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    border: 1px solid #ddd;
+  }
 
-    th, td {
-      text-align: left;
-      padding: 1%;
-    }
+  th, td {
+    text-align: left;
+    padding: 1%;
+  }
 
-    tr:nth-child(even) {
-      background-color: #f2f2f2
-    }
-  </style>
-  <div class="wrapper row3">
-    <main class="hoc container clear"> 
-      <!-- main body -->
+  tr:nth-child(even) {
+    background-color: #f2f2f2
+  }
+</style>
+<div class="wrapper row3">
+  <main class="hoc container clear"> 
+    <!-- main body -->
+    <!-- ################################################################################################ -->
+    <div class="content"> 
       <!-- ################################################################################################ -->
-      <div class="content"> 
-        <!-- ################################################################################################ -->
-        
+
         <?php if ($operazione == "a") { //se l'operazione richiesta è di aggiungere un dispositivo:
 
         ?>
@@ -144,7 +141,7 @@ if (isset($_POST['btn-dispositivo'])) {//se è stato premuto il bottone --> aggi
 
           </form>
         </div>
-      <?php }else if($operazione == "v"){
+      <?php } elseif($operazione == "v"){
               $query = $conn->query("SELECT * FROM  dispositivo WHERE proprietario=" . $_SESSION['id']); //query per visualizzare informazioni riguardo i propri dispositivi
               ?>
               <table>
@@ -160,19 +157,53 @@ if (isset($_POST['btn-dispositivo'])) {//se è stato premuto il bottone --> aggi
 
           ?>
           <tr> 
-            <td><?php echo $riga["codice"]?></td>
-            <td><?php echo $riga["nome"]?></td>
-            <td><?php echo $riga["data"]?></td>
+            <td><?php echo $riga["codice"] ?></td>
+            <td><?php echo $riga["nome"] ?></td>
+            <td><?php echo $riga["data"] ?></td>
           </tr>
 
 
           <?php 
 
-        }}?>
+        }} ?>
 
       </table>
-      <?php
-    } ?>
+    <?php } elseif ($operazione == "va" && $_SESSION["admin"]) {
+       $query = $conn->query("SELECT s.id,d.codice, d.nome, d.data, s.email FROM  dispositivo as d, users as s WHERE d.proprietario = s.id"); //query per visualizzare informazioni riguardo TUTTI i dispositivi
+       ?>
+       <table>
+        <th>Codice</th>
+        <th>Nome dispositivo</th>
+        <th>Data registrazione</th>
+        <th>Proprietario</th>
+        <th>Operazione</th>
+        
+
+        <?php
+
+      if ($query->num_rows >0) { // se esistono dispositivi già registrati
+        while ($riga = $query->fetch_assoc()) {
+
+          ?>
+          <tr> 
+            <td><?php echo $riga["codice"] ?></td>
+            <td><?php echo $riga["nome"] ?></td>
+            <td><?php echo $riga["data"] ?></td>
+            <td><?php echo $riga["email"] ?></td>
+            <td><a href="umiTemp.php?id=<?php echo $riga['id'] ?>&y=<?php echo date("Y"); ?>"><i class="fa fa-line-chart"></i>Umi/Temp &nbsp</a>
+                <a href="voltAmp.php?id=<?php echo $riga['id'] ?>&y=<?php echo date("Y");?>"><i class="fa fa-line-chart"></i>Volt/Amp &nbsp</a>
+                <a href="cancella.php?cancella&c=<?php echo $riga['codice'] ?>"><i class="fa fa-times"></i>Elimina</a>
+            </td>
+            <td></td>
+          </tr>
+
+
+          <?php 
+
+        }} ?>
+
+      </table>
+   <?php } ?>
 
   </div>
   <!-- ################################################################################################ -->

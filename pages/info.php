@@ -14,24 +14,35 @@ $userRow = mysqli_fetch_array($res, MYSQLI_ASSOC); //restituisco la riga sottofo
 }
 ?>
 
-  <?php
-  require __DIR__ . "/nav.php"
-  ?>
-    <main class="hoc container clear"> 
-      <!-- main body -->
-      <!-- ################################################################################################ -->
-      <div class="content"> 
-        <!-- ################################################################################################ -->
-        
+<?php
+require __DIR__ . "/nav.php"
+?>
+<style>
+  .lineDown{
 
-        
-        <!-- ################################################################################################ -->
-      </div>
-      <!-- ################################################################################################ -->
-      <!-- / main body -->
-      <div class="clear"></div>
-    </main>
+  width:100%;
+  border-bottom: solid 1px #CBCBCB;
+
+  }
+</style>
+<div class="wrapper row3">
+ <section class="hoc container clear"> 
+  <!-- ################################################################################################ -->
+  <div class="btmspace-80">
+   <h2 class="lineDown">Mattia Babbini</h2>
+   <p >Studente presso l'IIS Belluzzi-Fioravanti frequentante la classe quinta sezione C informatica.</p>
   </div>
-  <?php
-  require __DIR__ . "/bottom.php"
-  ?>
+
+<div class="btmspace-80">
+   <h2 class="lineDown">Gianmarco Cavazza</h2>
+   <p>Studente presso l'IIS Belluzzi-Fioravanti frequentante la classe quinta sezione C informatica.</p>
+   </div>
+ 
+</section>
+<!-- ################################################################################################ -->
+
+<!-- ################################################################################################ -->
+</div>
+<?php
+require __DIR__ . "/bottom.php"
+?>
